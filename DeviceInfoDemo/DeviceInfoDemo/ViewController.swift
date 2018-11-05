@@ -1,63 +1,84 @@
-# DeviceInfoDemo
-有时我们在 App 中提交一些统计信息或者用户反馈信息时，为了能更好地进行分析，通常会附带上当前应用程序的名称、版本号、设备型号、以及设备系统版本。
-这一篇主要是记录一些自己遇到过或已知的方法，纯水文，没什么好讲的，直接展示代码：
-```
-//获取设备名称
-let deviceName = UIDevice.current.name
-print("deviceName:\(deviceName)")
-//获取系统名称
-let sysName = UIDevice.current.systemName
-print("sysName:\(sysName)")
-//获取系统版本
-let sysVersion = UIDevice.current.systemVersion
-print("sysVersion:\(sysVersion)")
-//获取设备唯一标识符
-let deviceUUID = UIDevice.current.identifierForVendor?.uuidString
-print("deviceUUID:\(deviceUUID!)")
-//获取设备的型号
-let deviceModel = UIDevice.current.model
-print("deviceModel:\(deviceModel)")
-//电池电量
-//UIDevice.current.isBatteryMonitoringEnabled 方法必须使用
-UIDevice.current.isBatteryMonitoringEnabled = true
-let batteryLevel = UIDevice.current.batteryLevel
-print("batteryLevel:\(batteryLevel)")
-//电池状态
-let batteryState = UIDevice.current.batteryState
-switch batteryState {
-case .unknown: print("未识别")
-case .charging: print("充电中")
-case .full: print("充满状态")
-case .unplugged: print("非充电状态")
-}
-UIDevice.current.isBatteryMonitoringEnabled = false
+//
+//  ViewController.swift
+//  DeviceInfoDemo
+//
+//  Created by share2glory on 2018/11/5.
+//  Copyright © 2018年 WH. All rights reserved.
+//
+
+import UIKit
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+        
+        //获取设备名称
+        let deviceName = UIDevice.current.name
+        print("deviceName:\(deviceName)")
+        //获取系统名称
+        let sysName = UIDevice.current.systemName
+        print("sysName:\(sysName)")
+        //获取系统版本
+        let sysVersion = UIDevice.current.systemVersion
+        print("sysVersion:\(sysVersion)")
+        //获取设备唯一标识符
+        let deviceUUID = UIDevice.current.identifierForVendor?.uuidString
+        print("deviceUUID:\(deviceUUID!)")
+        //获取设备的型号
+        let deviceModel = UIDevice.current.model
+        print("deviceModel:\(deviceModel)")
+        
+        print("设备具体型号:\(UIDevice.current.deviceName)")
+        //电池电量
+        UIDevice.current.isBatteryMonitoringEnabled = true
+        let batteryLevel = UIDevice.current.batteryLevel
+        print("batteryLevel:\(batteryLevel)")
+        //电池状态
+        let batteryState = UIDevice.current.batteryState
+        switch batteryState {
+        case .unknown: print("未识别")
+        case .charging: print("充电中")
+        case .full: print("充满状态")
+        case .unplugged: print("非充电状态")
+        }
+        UIDevice.current.isBatteryMonitoringEnabled = false
+        
+        
+        let infoDictionary = Bundle.main.infoDictionary!
+        //app版本号
+        if let appVersion = infoDictionary["CFBundleVersion"]{
+            print("appVersion:\(appVersion)")
+        }
+        
+        //app名称
+        if let appName = infoDictionary["CFBundleDisplayName"]{
+            print("appName:\(appName)")
+        }
+        
+        //主程序版本号
+        if let shortVersion = infoDictionary["CFBundleShortVersionString"]{
+            print("shortVersion:\(shortVersion)")
+        }
+        
+        print("设备具体型号:\(UIDevice.current.deviceName)")
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
 
 
-let infoDictionary = Bundle.main.infoDictionary!
-//app版本号
-if let appVersion = infoDictionary["CFBundleVersion"]{
-print("appVersion:\(appVersion)")
 }
-
-//app名称
-if let appName = infoDictionary["CFBundleDisplayName"]{
-print("appName:\(appName)")
-}
-
-//主程序版本号
-if let shortVersion = infoDictionary["CFBundleShortVersionString"]{
-print("shortVersion:\(shortVersion)")
-}
-```
-获取手机具体型号：
-```
 extension UIDevice{
     var deviceName: String{
         var systemInfo = utsname()
         uname(&systemInfo)
-
+        
         let platform = withUnsafePointer(to: &systemInfo.machine.0) { ptr in
-        return String(cString: ptr)
+            return String(cString: ptr)
         }
         switch platform {
         case "iPhone3,1", "iPhone3,2", "iPhone3,3": return "iPhone 4"
@@ -80,8 +101,8 @@ extension UIDevice{
         case "iPhone10,1","iPhone10,4":   return "iPhone 8"
         case "iPhone10,2","iPhone10,5":   return "iPhone 8 Plus"
         case "iPhone10,3","iPhone10,6":   return "iPhone X"
-
-
+            
+            
         case "iPad1,1":   return "iPad"
         case "iPad1,2":   return "iPad 3G"
         case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":   return "iPad 2"
@@ -99,23 +120,17 @@ extension UIDevice{
         case "AppleTV3,1","AppleTV3,2":  return "Apple TV 3"
         case "AppleTV5,3":   return "Apple TV 4"
         case "i386", "x86_64":   return "Simulator"
-
+            
         case "iPod1,1":  return "iPod Touch 1"
         case "iPod2,1":  return "iPod Touch 2"
         case "iPod3,1":  return "iPod Touch 3"
         case "iPod4,1":  return "iPod Touch 4"
         case "iPod5,1":  return "iPod Touch (5 Gen)"
         case "iPod7,1":   return "iPod Touch 6"
-
+            
         default:  return platform
-
+            
         }
+        
     }
 }
-```
-直接使用
-```
-UIDevice.current.deviceName
-```
-还有一些方法没有记下，日后遇到再补上。
-
